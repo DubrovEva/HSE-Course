@@ -1,16 +1,8 @@
 #include "list.h"
 
-task::list::elem::elem(const int& new_value) {
-    value = new_value;
-    prev = next = nullptr;
-}
+task::list::elem::elem(const int& new_value) : value(new_value) {}
 
-task::list::list() {
-    first = nullptr;
-    last = nullptr;
-    lsize = 0;
-}
-
+task::list::list() {}
 
 task::list::list(size_t count, const int& value) {
 	while (lsize < count) {
@@ -71,7 +63,7 @@ void task::list::pop_back() {
 }
 
 void task::list::push_front(const int& value) {
-	if (lsize == 0) {
+	if (empty()) {
         first = last = new elem { value };
 	} else {
         elem * new_elem = new elem { value };
@@ -112,7 +104,7 @@ task::list& task::list::operator=(const list& other) {
 	clear();
 	first = new elem ( (other.first)-> value);
     elem * cur_elem = (other.first) -> next;
-	for(int i = 0; i < other.lsize; ++i) {
+	for(size_t i = 0; i < other.lsize; ++i) {
 		push_back(cur_elem -> value);
 		cur_elem = cur_elem -> next;
         if (i == other.lsize - 1)
@@ -127,7 +119,7 @@ void task::list::remove(const int& value) {
         pop_front();
     } else {
         elem * cur_elem = first -> next;
-        for(int i = 0; i < lsize; ++i) {
+        for(size_t i = 0; i < lsize; ++i) {
             if (i == lsize - 1 && cur_elem -> value == value) {
                 pop_back();
             } else if (cur_elem -> value == value) {
@@ -146,7 +138,7 @@ void task::list::unique() {
 	if (empty()) 
         return;
 	elem * cur_elem = first -> next;
-    for (int i = 0; i < lsize; ++i) {
+    for (size_t i = 0; i < lsize; ++i) {
         if (i == lsize && cur_elem -> value == cur_elem -> prev -> value) {
             pop_back();
         } else if (cur_elem -> value == cur_elem -> prev -> value) {
@@ -160,9 +152,9 @@ void task::list::unique() {
 }
 
 void task::list::sort() {
-	for (int i = 0; i < lsize; ++i) {
+	for (size_t i = 0; i < lsize; ++i) {
 	    elem * cur_elem = first;
-        for (int j = 0; j < lsize - 1; ++j) {
+        for (size_t j = 0; j < lsize - 1; ++j) {
             if ( (cur_elem -> value) > (cur_elem -> next -> value) ) {
                 if (j == 0 && j == lsize - 1) {
                     first = last;

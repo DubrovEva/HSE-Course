@@ -7,18 +7,18 @@ namespace task {
     private:
         class elem {
         public:
-            elem* prev;
-            elem* next;
+            elem* prev = nullptr;
+            elem* next = nullptr;
             int value;
             elem(const int& new_value);
         };
-        elem* first;
-        elem* last;
-        size_t lsize;
+        elem* first = nullptr;
+        elem* last = nullptr;
+        size_t lsize = 0;
 
     public:
-        list(); //+
-        list(size_t count, const int& value = int()); //+
+        list();
+        list(size_t count, const int& value = int());
         list(const list& x); 
         ~list();
         list& operator=(const list& other);
