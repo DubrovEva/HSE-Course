@@ -5,9 +5,6 @@
 template<typename TList> 
 struct Length;
 
-
-//template< template<typename> class C, typename E >
-
 template<typename Head, typename Tail>
 struct Length < TypeList<Head, Tail> >
 {
