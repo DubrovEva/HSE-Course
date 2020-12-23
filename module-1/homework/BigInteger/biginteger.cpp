@@ -14,10 +14,10 @@ BigInteger::BigInteger(int num) {
     improve();
 }
 BigInteger::BigInteger(std::string str) {
-    if (str[0] == '-' && str != "0")
+    if (str[0] == '-' && str != "-0")
         sign = false;
         
-	for (int i = str.size() - 1; i >= 1 - sign; i -= 9) {
+	for (size_t i = str.size() - 1; i + sign >= 1; i -= 9) {
         int x = 0;
         for (int j = 8; j >= 0; --j) {
             if (i - j < 0 || str[i - j] == '-')
@@ -44,7 +44,7 @@ BigInteger BigInteger::operator+(const BigInteger& other){
         }
     } else {
         result.sign = sign;
-        int carry = 0;
+        bool carry = 0;
         for (size_t i = 0; i < std::max(figures.size(),(other.figures).size()) || carry; ++i) {
             if (i == result.figures.size())
                 result.figures.push_back(0);
@@ -77,7 +77,7 @@ BigInteger BigInteger::operator-(const BigInteger& other){
         if (*this > other)  {
             result.sign = true;
             result.figures = figures;
-            int carry = 0;
+            bool carry = 0;
             for (size_t i = 0; i < other.figures.size() || carry; ++i) {
                 result.figures[i] -= carry + (i < other.figures.size() ? other.figures[i] : 0);
                 carry = result.figures[i] < 0;
@@ -88,7 +88,7 @@ BigInteger BigInteger::operator-(const BigInteger& other){
         } else {
             result.sign = false;
             result.figures = other.figures;
-            int carry = 0;
+            bool carry = 0;
             for (size_t i = 0; i < figures.size() || carry; ++i) {
                 result.figures[i] -= carry + (i < figures.size() ? figures[i] : 0);
                 carry = result.figures[i] < 0;
@@ -120,11 +120,11 @@ BigInteger BigInteger::operator*(const BigInteger& other){
 BigInteger BigInteger::half(){
     BigInteger result;
     result.figures = figures;
-    int carry = 0;
-    for (int i = (int) figures.size() - 1;  i >= 0; --i) {
+    bool carry = 0;
+    for (size_t i = figures.size() - 1;  i >= 0; --i) {
         long long cur = result.figures[i] + carry * 1ll * base;
-        result.figures[i] = int (cur / 2);
-        carry = int (cur % 2);
+        result.figures[i] = cur / 2;
+        carry = cur % 2;
     }
     while (result.figures.size() > 1 && result.figures.back() == 0)
         result.figures.pop_back();
@@ -132,8 +132,9 @@ BigInteger BigInteger::half(){
     result.improve();
     return result; 
 }
+
 BigInteger BigInteger::operator/(const BigInteger& other){
-    int carry = 0;
+    bool carry = 0;
     BigInteger l = 1, r = *this, diff = BigInteger(1);
 
     while (r - l > diff) {
