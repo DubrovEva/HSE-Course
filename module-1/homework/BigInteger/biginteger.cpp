@@ -28,7 +28,6 @@ BigInteger::BigInteger(std::string str) {
 	}
     improve();
 }
-// функция которая удаляет ведущие нули и правит -0
 
 BigInteger BigInteger::operator+(const BigInteger& other){
     BigInteger result;
