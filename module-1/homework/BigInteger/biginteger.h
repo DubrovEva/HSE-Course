@@ -6,19 +6,19 @@ class BigInteger {
 private:
     std::vector<int> figures;
     bool sign = true;
-    const int base = 1000000000;
+    static const int base = 1000000000;
     void improve();
 public:       
     BigInteger();
     BigInteger(int);   
     BigInteger(std::string);  
 
-    BigInteger operator +(const BigInteger& other);
-    BigInteger operator -(const BigInteger& other);
-    BigInteger operator *(const BigInteger& other);
+    friend BigInteger operator +(const BigInteger& first, const BigInteger& other);
+    friend BigInteger operator -(const BigInteger& first, const BigInteger& other);
+    friend BigInteger operator *(const BigInteger& first, const BigInteger& other);
     BigInteger half();
-    BigInteger operator /(const BigInteger& other);
-    BigInteger operator %(const BigInteger other);      
+    friend BigInteger operator /(const BigInteger& first, const BigInteger& other);
+    friend BigInteger operator %(const BigInteger& first, const BigInteger other);      
     
     BigInteger& operator+=(const BigInteger& other);
     BigInteger& operator-=(const BigInteger& other);
@@ -32,12 +32,12 @@ public:
     BigInteger& operator--();
     BigInteger operator--(int);
 
-    bool operator==(const BigInteger& other);
-    bool operator!=(const BigInteger& other);
-    bool operator>(const BigInteger& other);
-    bool operator<(const BigInteger& other);
-    bool operator<=(const BigInteger& other);
-    bool operator>=(const BigInteger& other);
+    friend bool operator==(const BigInteger& first, const BigInteger& other);
+    friend bool operator!=(const BigInteger& first, const BigInteger& other);
+    friend bool operator>(const BigInteger& first, const BigInteger& other);
+    friend bool operator<(const BigInteger& first, const BigInteger& other);
+    friend bool operator<=(const BigInteger& first, const BigInteger& other);
+    friend bool operator>=(const BigInteger& first, const BigInteger& other);
 
     std::string toString() const;
 
