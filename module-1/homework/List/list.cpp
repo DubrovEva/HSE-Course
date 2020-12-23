@@ -10,8 +10,11 @@ task::list::list(size_t count, const int& value) {
 	}
 }
 
-task::list::list(const list& other) : list() {
-	*this = other;
+task::list::list(const list& other) {
+    clear();
+	for (elem * cur = other.first; cur != nullptr; cur = cur -> next) {
+        push_back(cur -> value);
+    }
 }
 
 int& task::list::front() {
@@ -45,9 +48,11 @@ void task::list::clear() {
 
 void task::list::push_back(const int& value) {
 	if (lsize == 0) {
-        first = last = new elem { value };
+        first = new elem { value };
+        last = first;
 	} else {
         elem * new_elem = new elem { value };
+        new_elem -> prev = last;
 		last -> next = new_elem;
         last = new_elem;
 	}
@@ -55,18 +60,27 @@ void task::list::push_back(const int& value) {
 }
 
 void task::list::pop_back() {
-    last -> prev -> next = nullptr;
-    elem * penult = last -> prev;
-	delete last;
-    last = penult;
-	--lsize;
+    if (lsize >= 2) {
+        last -> prev -> next = nullptr;
+        elem * penult = last -> prev;
+        delete last;
+        last = penult;
+    } else if (lsize == 1) {
+        delete last;
+        first = last = nullptr;
+    } else {
+        return;
+    }
+    --lsize;
 }
 
 void task::list::push_front(const int& value) {
 	if (empty()) {
-        first = last = new elem { value };
+        first = new elem { value };
+        last = first;
 	} else {
         elem * new_elem = new elem { value };
+        new_elem -> next = first;
 		first -> prev = new_elem;
         first = new_elem;
 	}
@@ -74,10 +88,17 @@ void task::list::push_front(const int& value) {
 }
 
 void task::list::pop_front() {
-	first -> next -> prev = nullptr;
-    elem * second = first -> next;
-	delete first;
-    first = second;
+    if (lsize >= 2) {
+        first -> next -> prev = nullptr;
+        elem * second = first -> next;
+        delete first;
+        first = second;
+    } else if (lsize == 1) {
+        delete first;
+        first = last = nullptr;
+    } else {
+        return;
+    }
 	--lsize;
 }
 
@@ -91,67 +112,72 @@ void task::list::resize(size_t count) {
 }
 
 void task::list::swap(list& other) {
-    list * current = this;
-    *this = other;
-    other = * current;
+    elem * t = first;
+    first = other.first;
+    other.first = t;
+    t = last;
+    last = other.last;
+    other.last = t;
+    int m = lsize;
+    lsize = m;
+    other.lsize = m;
 }
 
 task::list::~list() {
-	task::list::clear();
+    clear();
 }
 
 task::list& task::list::operator=(const list& other) {
 	clear();
-	first = new elem ( (other.first)-> value);
-    elem * cur_elem = (other.first) -> next;
-	for(size_t i = 0; i < other.lsize; ++i) {
-		push_back(cur_elem -> value);
-		cur_elem = cur_elem -> next;
-        if (i == other.lsize - 1)
-            last = cur_elem;
-	} 
-    lsize = other.lsize;
+	for (elem * cur = other.first; cur != nullptr; cur = cur -> next) {
+        push_back(cur -> value);
+    }
     return *this;
 }
 
 void task::list::remove(const int& value) {
+    if (empty())
+        return;
 	if (first -> value == value) {
         pop_front();
     } else {
-        elem * cur_elem = first -> next;
-        for(size_t i = 0; i < lsize; ++i) {
-            if (i == lsize - 1 && cur_elem -> value == value) {
+        for (elem * cur_elem = first -> next; cur_elem != nullptr; cur_elem = cur_elem -> next) {
+            if (cur_elem -> next == nullptr && cur_elem -> value == value) {
                 pop_back();
             } else if (cur_elem -> value == value) {
                 cur_elem -> prev -> next = cur_elem -> next;
                 cur_elem -> next -> prev = cur_elem -> prev;
+                --lsize;
                 delete cur_elem;
                 break;
-            }
-            cur_elem = cur_elem -> next;
-            
+            }  
 	    } 
     }
 }
 
 void task::list::unique() {
-	if (empty()) 
+	if (lsize <= 1) 
         return;
-	elem * cur_elem = first -> next;
-    for (size_t i = 0; i < lsize; ++i) {
-        if (i == lsize && cur_elem -> value == cur_elem -> prev -> value) {
+	
+    for (elem * cur_elem = first -> next; cur_elem != nullptr; cur_elem = cur_elem -> next) {
+        if (cur_elem -> next == nullptr && cur_elem -> value == cur_elem -> prev -> value) {
             pop_back();
+            break;
         } else if (cur_elem -> value == cur_elem -> prev -> value) {
             cur_elem -> prev -> next = cur_elem -> next;
             cur_elem -> next -> prev = cur_elem -> prev;
+            elem * temp = cur_elem -> prev;
             delete cur_elem;
-            break;
+
+            cur_elem = temp;
         }
-        cur_elem = cur_elem -> next;        
 	} 
 }
 
+
 void task::list::sort() {
+    if (lsize <= 1)
+        return;
 	for (size_t i = 0; i < lsize; ++i) {
 	    elem * cur_elem = first;
         for (size_t j = 0; j < lsize - 1; ++j) {
